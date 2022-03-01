@@ -207,7 +207,6 @@ class _VistaDeTareaInventarioAlumnoWidgetState extends StateMVC {
                                     Container(
                                       decoration: BoxDecoration(
                                         color: FlutterFlowTheme.lilac,
-
                                       ),
                                       height: MediaQuery
                                           .of(context)
@@ -329,7 +328,10 @@ class _VistaDeTareaInventarioAlumnoWidgetState extends StateMVC {
                                   itemBuilder: (context, index) {
                                     return Column(
                                       children: [
-                                        Row(
+                                      Container(
+                                      color: Colors.amber,
+                                      child:
+                                      Row(
                                           mainAxisSize: MainAxisSize.max,
                                           mainAxisAlignment: MainAxisAlignment.center,
                                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -409,6 +411,7 @@ class _VistaDeTareaInventarioAlumnoWidgetState extends StateMVC {
                                             ),
                                           ],
                                         ),
+                                      ),
                                         SizedBox(
                                           height: MediaQuery
                                               .of(context)

@@ -41,5 +41,11 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+    <key>NSPhotoLibraryUsageDescription</key>
+	<string>Para seleccionar las fotos de los alumnos y añadir fotos a las instrucciones</string>
+    <key>NSCameraUsageDescription</key>
+	<string>Para echar fotos de los alumnos y añadir fotos a las instrucciones</string>
+    <key>NSMicrophoneUsageDescription</key>
+	<string>Para echar fotos de los alumnos y añadir fotos a las instrucciones</string>
 </dict>
 </plist>

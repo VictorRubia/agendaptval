@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:agendaptval/flutter_flow/flutter_flow_widgets.dart';
+import 'package:agendaptval/flutter_flow/flutter_image_add_drag_sort.dart';
 import 'package:agendaptval/modeloControlador/controller.dart';
 import 'package:agendaptval/modeloControlador/personalizacion.dart';
 import 'package:agendaptval/modeloControlador/tarea.dart';
@@ -12,6 +15,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mvc_pattern/mvc_pattern.dart';
 
 import '../../flutter_flow/flutter_flow_icon_button.dart';
@@ -40,6 +44,9 @@ class _EditarUsuarioWidgetState extends StateMVC {
   TextEditingController textController4;
   Usuarios dropDownValue3 = Usuarios(0,"Seleccione un profesor",null,null,null,null,null,null,null,null);
   String dropDownValuenombre;
+  List<ImageDataItem> imageList = [];
+  final GlobalKey<ScaffoldState> _keyImagenes = GlobalKey();
+  final ImagePicker _picker = ImagePicker();
 
   Usuarios usuarioSelect;
 
@@ -51,7 +58,6 @@ class _EditarUsuarioWidgetState extends StateMVC {
   tipoInfo info;
 
   // List of items in our dropdown menu
-
 
   var items = [
     'alumno',
@@ -85,6 +91,7 @@ class _EditarUsuarioWidgetState extends StateMVC {
     textController4 = TextEditingController(text: this._idUsuario.password);
     tipo = this._idUsuario.getRol();
     info = this._idUsuario.getFormatoAyuda();
+    imageList.add(new ImageDataItem(this._idUsuario.profilePhoto, key: DateTime.now().millisecondsSinceEpoch.toString()));
 
     if (tipo == tipoUsuario.ALUMNO){
       dropdownvalue = "alumno";
@@ -96,20 +103,13 @@ class _EditarUsuarioWidgetState extends StateMVC {
       dropdownvalue = "admin";
     }
 
-
-
     if (info == tipoInfo.TEXTO){
-      dropdownvalue2 = "text";
+      dropdownvalue2 = "texto";
     }else if (info == tipoInfo.PICTOGRAMAS){
       dropdownvalue2 = "pictogramas";
     }else{
       dropdownvalue2 = "";
     }
-
-    print('$info');
-
-
-
   }
 
   @override
@@ -117,11 +117,25 @@ class _EditarUsuarioWidgetState extends StateMVC {
     super.dispose();
   }
 
+  doAddImageCamera(List<ImageDataItem> uploading, onBegin) async {
+    XFile Ximage = await _picker.pickImage(
+      source: ImageSource.camera,
+      maxWidth: 2048,
+      maxHeight: 2048,
+      imageQuality: 85,
+    );
+    File image = File(Ximage.path);
+    if (image == null)
+      return null;
+    if (onBegin != null) await onBegin();
+    await sleep(new Duration(seconds: 1));
+    return ImageDataItem(image.absolute.path, key: DateTime.now().millisecondsSinceEpoch.toString());
+  }
 
   @override
   Widget build(BuildContext context) {
-    var imgSize = (MediaQuery.of(context).size.width - 30) / 4.0;
-    var videoSize = (MediaQuery.of(context).size.width - 30) / 3.0;
+    var imgSize = (MediaQuery.of(context).size.width - 30) / 2.0;
+    var videoSize = (MediaQuery.of(context).size.width - 30) / 1.5;
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
@@ -160,9 +174,8 @@ class _EditarUsuarioWidgetState extends StateMVC {
               ),
               onPressed: () async {
 
-                await _con.setUsuario(this._idUsuario.idUsuario, textController1.text, textController2.text, textController3.text, dropdownvalue, dropdownvalue2,dropDownValue3.idUsuario.toString());
-                await Navigator.pop(context);
-
+                  await _con.setUsuario(this._idUsuario.idUsuario, textController1.text, textController2.text, textController3.text, imageList[0], dropdownvalue, dropdownvalue2,dropDownValue3.idUsuario.toString());
+                  await Navigator.pop(context);
               },
             ),
           ],
@@ -174,20 +187,77 @@ class _EditarUsuarioWidgetState extends StateMVC {
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
-
               Expanded(
-
                 child: ListView(
                   children: [
+                    Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(
+                          24, 20, 24, 0),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Text(
+                            'FOTO DE PERFIL',
+                            style:
+                            FlutterFlowTheme.bodyText2.override(
+                              fontFamily: 'Lexend Deca',
+                              color: Color(0xFF262D34),
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
 
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(
-                          10, 0, 10, 0),
-                      child: CachedNetworkImage(
-                        imageUrl: this._idUsuario.profilePhoto,
-                        progressIndicatorBuilder: (context, url, downloadProgress) =>
-                            CircularProgressIndicator(value: downloadProgress.progress),
-                        errorWidget: (context, url, error) => Icon(Icons.error),
+                          24, 0, 0, 0),
+                      child: ImageAddDragContainer(
+                        key: _keyImagenes,
+                        data: imageList,
+                        maxCount: 1,
+                        readOnly: false,
+                        draggableMode: false,
+                        itemSize: Size(imgSize, imgSize),
+                        addWidget: Material(
+                          color: Colors.transparent,
+                          child: Center(
+                            child: Ink(
+                              decoration: const ShapeDecoration(
+                                color: FlutterFlowTheme.laurelGreenDarker,
+                                shape: CircleBorder(),
+                              ),
+                              child: IconButton(
+                                icon: Icon(Icons.add, color: Colors.white,),
+                              ),
+                            ),
+                          ),
+                        ),
+                        onAddImage: (uploading, onBegin) async {
+                          return await doAddImageCamera(uploading, onBegin);
+                        },
+                        onChanged: (items) async {
+                          imageList = items;
+                        },
+                        builderItem: (context, key, url, type) {
+                          return Container(
+                              color: Colors.white,
+                              child: url == null || url.isEmpty ? null :
+                              url.contains('http') ?
+                              CachedNetworkImage(
+                                imageUrl: "${url}",
+                                fit: BoxFit.cover,
+                                width: 100,
+                                height: 100,
+                                placeholder: (context, url) => SpinKitRotatingCircle(
+                                  color: FlutterFlowTheme.laurelGreen,
+                                  size: 50.0,
+                                ),
+                                errorWidget: (context, url, error) => Icon(Icons.error),
+                              ) : Container(child: Image.file(File(url)),)
+                          );
+                        },
                       ),
                     ),
 
@@ -476,24 +546,16 @@ class _EditarUsuarioWidgetState extends StateMVC {
                     ),
 
                     Padding(
-
                       padding: EdgeInsetsDirectional.fromSTEB(
                           30, 0, 10, 0),
-
                       child: DropdownButton(
-
                         // Initial Value
                         value: dropdownvalue2,
-
                         borderRadius: BorderRadius.circular(5),
-
                         // Down Arrow Icon
                         icon: const Icon(Icons.keyboard_arrow_down),
-
                         isExpanded: false,
-
                         dropdownColor: FlutterFlowTheme.laurelGreen,
-
                         // Array list of items
                         items: items2.map((String items) {
                           return DropdownMenuItem(

@@ -2,8 +2,8 @@
     package="com.asociacionparchis.agendaptval.agendaptval">
     <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:label="agendaptval"
-        android:icon="@mipmap/ic_launcher"
+        android:label="[R]Agenda San Rafael"
+        android:icon="@mipmap/launcher_icon"
         android:usesCleartextTraffic="true"
         >
 

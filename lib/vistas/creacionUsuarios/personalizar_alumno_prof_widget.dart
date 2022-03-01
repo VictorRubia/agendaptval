@@ -259,7 +259,7 @@ class _PersonalizarAlumnoWidgetState extends StateMVC {
                                 child: Container(
                                   child: CheckboxListTile(
                                     title: Text(
-                                      'Reloj en la Homepage',
+                                      'Reloj en la página de inicio',
                                       style:
                                       FlutterFlowTheme.bodyText2.override(
                                         fontFamily: 'Lexend Deca',
@@ -316,7 +316,7 @@ class _PersonalizarAlumnoWidgetState extends StateMVC {
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
                                   Text(
-                                    'Opciones en la Homepage',
+                                    'Apartados en página de inicio',
                                     style:
                                     FlutterFlowTheme.bodyText2.override(
                                       fontFamily: 'Lexend Deca',
@@ -430,7 +430,7 @@ class _PersonalizarAlumnoWidgetState extends StateMVC {
                                 mainAxisSize: MainAxisSize.max,
                                 children: [
                                   Text(
-                                    'Nº de elementos en el Homepage',
+                                    'Nº de bloques por pantalla',
                                     style:
                                     FlutterFlowTheme.bodyText2.override(
                                       fontFamily: 'Lexend Deca',

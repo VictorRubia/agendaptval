@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 import 'dart:core';
 import 'package:agendaptval/flutter_flow/flutter_image_add_drag_sort.dart';
-import 'package:agendaptval/flutter_flow/random_number.dart';
 import 'package:agendaptval/modeloControlador/opcionesHomepage.dart';
 import 'package:agendaptval/modeloControlador/personalizacion.dart';
 import 'package:agendaptval/modeloControlador/pictograma.dart';
@@ -26,7 +25,7 @@ import 'emoticono.dart';
 import 'item.dart';
 import 'menus.dart';
 
-final IP = '192.168.137.1';
+final IP = 'victorrubia.com';
 
 /// Clase del Modelo donde se guardará toda la información asociada al usuario que
 /// inicia sesión en la aplicación
@@ -2454,10 +2453,14 @@ class Controller extends ControllerMVC{
 
   /// Función para obtener la personalizacion de un alumno
   /// @author angel
-  void crearUsuario(String nombre, String apellidos, String username, String password, String dni, String rol, String tipoInfo, String profesorTutelado) async{
+  void crearUsuario(String nombre, String apellidos, String username, ImageDataItem imagen, String password, String dni, String rol, String tipoInfo, String profesorTutelado) async{
 
-    String query = "insert into Usuarios (nombre, apellidos, foto, username, password, dni, rol, tipoInfo, tutelado_por) values (?,?,':3000/file?file=perfiles/2.jpg',?,?,?,?,?,?)";
-    List<String> valores = [nombre, apellidos, username, password, dni, rol, tipoInfo, profesorTutelado ];
+    String url_imagenes = '';
+
+    url_imagenes = (await subirPictograma(File(imagen.url))).split('\"localhost')[1].split('\",')[0];
+
+    String query = "insert into Usuarios (nombre, apellidos, foto, username, password, dni, rol, tipoInfo, tutelado_por) values (?,?,?,?,?,?,?,?,?)";
+    List<String> valores = [nombre, apellidos, url_imagenes, username, password, dni, rol, tipoInfo, profesorTutelado ];
     await queryBD(query, valores);
 
     if(rol == 'alumno') {
@@ -2547,13 +2550,31 @@ class Controller extends ControllerMVC{
 
   /// Función para actualizar los datos de un usuario
   /// @author angel
-  void setUsuario(int id_usuario, String nombre, String apellidos, String username, String rol, String tipoInfo, String profeTutelado) async{
+  void setUsuario(int id_usuario, String nombre, String apellidos, String username, ImageDataItem imagen, String rol, String tipoInfo, String profeTutelado) async{
 
-    String query = 'update Usuarios set nombre = ?, apellidos = ?, username = ?, rol = ?, tipoInfo = ?, tutelado_por = ? where id_usuario = ?';
+    String query;
 
-    List<String> valores = [nombre,apellidos ,username,rol,tipoInfo,id_usuario.toString(), profeTutelado];
-    Results r = await queryBD(query, valores);
+    if(!imagen.url.contains('http')) {
+      String url_imagenes = '';
 
+      url_imagenes =
+      (await subirPictograma(File(imagen.url))).split('\"localhost')[1].split(
+          '\",')[0];
+
+      query = 'update Usuarios set nombre = ?, apellidos = ?, foto = ?, username = ?, rol = ?, tipoInfo = ?, tutelado_por = ? where id_usuario = ?';
+
+      List<String> valores = [nombre,apellidos, url_imagenes, username,rol,tipoInfo, profeTutelado, id_usuario.toString()];
+      Results r = await queryBD(query, valores);
+
+      print(url_imagenes);
+    }
+    else{
+      query = 'update Usuarios set nombre = ?, apellidos = ?, username = ?, rol = ?, tipoInfo = ?, tutelado_por = ? WHERE id_usuario = ?';
+
+      List<String> valores = [nombre,apellidos, username,rol,tipoInfo, profeTutelado, id_usuario.toString()];
+      Results r = await queryBD(query, valores);
+
+    }
 
   }
 
